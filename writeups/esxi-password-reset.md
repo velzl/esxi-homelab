@@ -17,11 +17,6 @@ The HP ProLiant DL360p Gen8 was acquired with VMware ESXi 6.5 already installed 
 
 ---
 
-## Why Not Just Reinstall?
-
-The server contained existing Windows Server 2016 VMs with active Datacenter licenses. A fresh ESXi install would have required careful datastore preservation and risked data loss. Manual password recovery was cleaner and safer.
-
----
 
 ## How ESXi Stores Passwords
 
