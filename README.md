@@ -37,8 +37,9 @@ Dell PowerConnect 3548 (Switch)
     |              |--- (future targets)
     |
 Attack Machine (Kali Linux)
-    | (WiFi + static route via main laptop)
+    | (WiFi/Ethernet + static route via main laptop)
     | ip route add 192.168.137.0/24 via <main laptop WiFi IP>
+    | (For an ethernet connection (used via switch) use sudo ip addr add 192.168.137.100/24 [static ip for attack machine on the /24 subnet] and the previous ip route command 
 ```
 
 ---
@@ -65,6 +66,7 @@ Configured a segmented lab network without a dedicated router:
 - Configured ESXi management network with a static IP (`192.168.137.50`)
 - Set up a Dell PowerConnect 3548 managed switch, verified VLAN and port configuration via CLI
 - Enabled IP forwarding on the Windows host (`IPEnableRouter`) and added static routes on the Kali attack machine to reach the `192.168.137.0/24` subnet wirelessly
+- Used a wired connection for the kali attack machine wired in via switch setting up the static ip of ('192.168.137.100') to ensure the attack machine can access the server
 
 ### 3. Windows Server VM Access Recovery
 Multiple Windows Server 2016 VMs existed with unknown Administrator passwords:
