@@ -43,7 +43,7 @@ Home WiFi (192.168.1.x)
 ┌───────────────────┐
 │  Attack Machine   │  Connected via home WiFi/ Or wired ethernet
 │  Kali Linux       │  Static route: 192.168.137.0/24 via <main laptop WiFi IP>
-└───────────────────┘  (FOR ETHERNET USE ONLY) -- Reference number 6
+└───────────────────┘  (FOR ETHERNET USE ONLY USE STEP 6 AND SKIP 5) 
                         
 ```
 
