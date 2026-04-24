@@ -41,9 +41,10 @@ Home WiFi (192.168.1.x)
    └── (future) Port N: Dedicated wired attack machine
 
 ┌───────────────────┐
-│  Attack Machine   │  Connected via home WiFi
+│  Attack Machine   │  Connected via home WiFi/ Or wired ethernet
 │  Kali Linux       │  Static route: 192.168.137.0/24 via <main laptop WiFi IP>
-└───────────────────┘
+└───────────────────┘  (FOR ETHERNET USE ONLY) -- Reference number 6
+                        
 ```
 
 ---
@@ -150,6 +151,18 @@ nmap -sV 192.168.137.50
 Both succeeded — the Kali machine could now reach the ESXi host and all VMs on the lab network.
 
 ---
+
+
+##  6. FOR ETHERNET USE ONLY
+
+```bash
+sudo ip link set eth0 up
+```
+
+```bash
+sudo ip addr add 192.168.137.100/24 dev eth0
+sudo ip route add default via 192.168.137.1
+```
 
 ## Security Considerations
 
