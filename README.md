@@ -34,12 +34,14 @@ Dell PowerConnect 3548 (Switch)
     |              |
     |              |--- Windows Server 2016 VMs
     |              |--- Photon OS VM
+    |              |--- Kali Linux VM (internal attack machine)
     |              |--- (future targets)
     |
-Attack Machine (Kali Linux)
+Attack Machine (Kali Linux - external)
     | (WiFi/Ethernet + static route via main laptop)
-    | ip route add 192.168.137.0/24 via <main laptop WiFi IP>
-    | (For an ethernet connection (used via switch) use sudo ip addr add 192.168.137.100/24 [static ip for attack machine on the /24 subnet] and the previous ip route command 
+    | Wireless: ip route add 192.168.137.0/24 via <main laptop WiFi IP>
+    | Wired (via switch): sudo ip addr add 192.168.137.100/24 dev eth0
+    |                     sudo ip route add default via 192.168.137.1
 ```
 
 ---
@@ -66,7 +68,7 @@ Configured a segmented lab network without a dedicated router:
 - Configured ESXi management network with a static IP (`192.168.137.50`)
 - Set up a Dell PowerConnect 3548 managed switch, verified VLAN and port configuration via CLI
 - Enabled IP forwarding on the Windows host (`IPEnableRouter`) and added static routes on the Kali attack machine to reach the `192.168.137.0/24` subnet wirelessly
-- Used a wired connection for the kali attack machine wired in via switch setting up the static ip of ('192.168.137.100') to ensure the attack machine can access the server
+- Used a wired connection for the Kali attack machine via switch, setting a static IP of `192.168.137.100` to ensure reliable access to the server and all VMs
 
 ### 3. Windows Server VM Access Recovery
 Multiple Windows Server 2016 VMs existed with unknown Administrator passwords:
@@ -77,9 +79,19 @@ Multiple Windows Server 2016 VMs existed with unknown Administrator passwords:
 - Used NTPWEdit within Hiren's to reset Administrator credentials
 - Restored normal boot order post-recovery
 
-### 4. Lab Network for Offensive Security Practice
-- Kali Linux deployed as dedicated attack machine
-- Static routing configured to reach all lab targets wirelessly
+### 4. Kali Linux VM Deployment (Internal Attack Machine)
+Deployed a dedicated internal Kali Linux VM directly on the ESXi host:
+
+- Downloaded the official Kali Linux VMware image
+- Transferred files to the ESXi datastore via WinSCP over SSH
+- Converted the VMDK from disk type 7 to a format compatible with ESXi 6.5 using `vmkfstools`
+- Manually edited the `.vmx` configuration file to set CPU (4 cores), RAM (8GB), and correct network portgroup (`VM Network`) due to ESXi 6.5 web UI incompatibility with newer VM hardware versions
+- Resolved sound device and network portgroup warnings through direct VMX editing
+- VM successfully booting and reachable on the `192.168.137.x` lab network
+
+### 5. Lab Network for Offensive Security Practice
+- Kali Linux deployed as dedicated internal and external attack machine
+- Static routing configured to reach all lab targets wirelessly or via wired switch connection
 - ESXi web UI accessible from both main laptop and attack machine
 - VMs snapshotted before any offensive testing to allow rollback
 
@@ -93,13 +105,15 @@ Multiple Windows Server 2016 VMs existed with unknown Administrator passwords:
 - Windows networking (ICS, IP forwarding, static routes)
 - Offline credential recovery (Linux shadow file manipulation, NTPWEdit)
 - Enterprise hardware deployment and management
+- VMDK format conversion and VM hardware compatibility troubleshooting
+- VMX file editing for manual VM configuration
 - Lab documentation and network diagramming
 
 ---
 
 ## Planned Next Steps
 
-- [ ] Deploy Kali Linux VM as internal attack machine
+- [x] Deploy Kali Linux VM as internal attack machine
 - [ ] Set up Active Directory on Windows Server 2016 for AD attack practice
 - [ ] Deploy pfSense VM to replace laptop-based routing
 - [ ] Add Metasploitable / intentionally vulnerable VMs as targets
@@ -114,6 +128,7 @@ Multiple Windows Server 2016 VMs existed with unknown Administrator passwords:
 - [ESXi Password Reset via Linux Live Boot](writeups/esxi-password-reset.md)
 - [Windows Server VM Credential Recovery](writeups/windows-vm-password-reset.md)
 - [Lab Network Configuration](writeups/network-config.md)
+- [Kali Linux VM Deployment on ESXi 6.5](writeups/kali-vm-deployment.md)
 
 ---
 
@@ -127,5 +142,7 @@ Multiple Windows Server 2016 VMs existed with unknown Administrator passwords:
 | NTPWEdit | Offline Windows password reset |
 | VMware ESXi Host Client | Hypervisor web UI |
 | Dell PowerConnect CLI | Switch configuration |
+| WinSCP | SFTP/SCP file transfer to ESXi datastore |
+| vmkfstools | VMDK conversion and disk management |
 | Kali Linux | Offensive security attack platform |
 | Nmap | Network reconnaissance |
