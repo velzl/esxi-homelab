@@ -51,9 +51,7 @@ The ESXi datastore browser only supports single file uploads. SSH was enabled to
 Connected to the ESXi host via WinSCP:
 - Protocol: **SCP**
 - Host: `192.168.137.50`
-- Username: `vpxuser`
-
-> Note: Root SSH login was restricted on this ESXi host. `vpxuser` had sufficient datastore access for file transfer.
+- Username: `root`
 
 Created a dedicated folder on the datastore and uploaded all files at once by selecting all and dragging into WinSCP:
 
@@ -151,7 +149,6 @@ VM was reachable on the `192.168.137.x` lab network and could reach the ESXi hos
 
 - Modern Kali VMware images use VMDK disk type 7 which is incompatible with ESXi 6.5 — `vmkfstools` conversion is the fix
 - ESXi 6.5 web UI crashes on VMs with hardware version 19+ — direct VMX editing is the workaround
-- `vpxuser` can be used for datastore file transfers when root SSH is restricted
 - Always verify the `networkName` in the VMX matches an existing portgroup on the ESXi host — missing portgroup silently prevents network connectivity
 - Sound device warnings on ESXi are harmless — always click No to avoid reconnection attempts on every boot
 
