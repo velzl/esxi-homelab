@@ -35,6 +35,7 @@ Dell PowerConnect 3548 (Switch)
     |              |--- Windows Server 2016 VMs
     |              |--- Photon OS VM
     |              |--- Kali Linux VM (internal attack machine)
+    |              |--- AD Server - CIC-AD1 (192.168.137.10)
     |              |--- (future targets)
     |
 Attack Machine (Kali Linux - external)
@@ -89,7 +90,17 @@ Deployed a dedicated internal Kali Linux VM directly on the ESXi host:
 - Resolved sound device and network portgroup warnings through direct VMX editing
 - VM successfully booting and reachable on the `192.168.137.x` lab network
 
-### 5. Lab Network for Offensive Security Practice
+### 5. Active Directory Lab & Kerberoasting
+Discovered a pre-existing Active Directory environment on the server (domain: `MSIC`, DC: `CIC-AD1`) and used it as a red team practice target:
+
+- Enumerated domain users, groups, and Service Principal Names (SPNs) using built-in Windows tools
+- Identified misconfigured service accounts (`cicdb`, `cicprod`) with excessive privileges — `cicprod` was a member of Domain Admins
+- Registered an SPN on the `cicdb` service account to simulate a Kerberoastable target
+- Performed a full Kerberoasting attack using Impacket's `GetUserSPNs` from Kali Linux — successfully requested and captured a TGS ticket hash
+- Cracked the captured `$krb5tgs$23$` hash offline using Hashcat with the rockyou wordlist
+- Resolved Kerberos clock skew issues between attacker and DC during the engagement
+
+### 6. Lab Network for Offensive Security Practice
 - Kali Linux deployed as dedicated internal and external attack machine
 - Static routing configured to reach all lab targets wirelessly or via wired switch connection
 - ESXi web UI accessible from both main laptop and attack machine
@@ -107,6 +118,8 @@ Deployed a dedicated internal Kali Linux VM directly on the ESXi host:
 - Enterprise hardware deployment and management
 - VMDK format conversion and VM hardware compatibility troubleshooting
 - VMX file editing for manual VM configuration
+- Active Directory enumeration and attack techniques
+- Kerberoasting — SPN enumeration, TGS ticket capture, offline hash cracking
 - Lab documentation and network diagramming
 
 ---
@@ -114,12 +127,15 @@ Deployed a dedicated internal Kali Linux VM directly on the ESXi host:
 ## Planned Next Steps
 
 - [x] Deploy Kali Linux VM as internal attack machine
-- [ ] Set up Active Directory on Windows Server 2016 for AD attack practice
+- [x] Set up Active Directory on Windows Server 2016 for AD attack practice
 - [ ] Deploy pfSense VM to replace laptop-based routing
 - [ ] Add Metasploitable / intentionally vulnerable VMs as targets
 - [ ] Configure Wazuh SIEM for log monitoring and detection practice
 - [ ] Document penetration testing exercises with full methodology writeups
 - [ ] Set up VLANs on the managed switch for network segmentation practice
+- [ ] BloodHound AD attack path mapping
+- [ ] ASREPRoasting
+- [ ] Pass the Hash attacks
 
 ---
 
@@ -129,6 +145,7 @@ Deployed a dedicated internal Kali Linux VM directly on the ESXi host:
 - [Windows Server VM Credential Recovery](writeups/windows-vm-password-reset.md)
 - [Lab Network Configuration](writeups/network-config.md)
 - [Kali Linux VM Deployment on ESXi 6.5](writeups/kali-vm-deployment.md)
+- [Kerberoasting Active Directory Attack](writeups/kerberoasting.md)
 
 ---
 
@@ -146,3 +163,6 @@ Deployed a dedicated internal Kali Linux VM directly on the ESXi host:
 | vmkfstools | VMDK conversion and disk management |
 | Kali Linux | Offensive security attack platform |
 | Nmap | Network reconnaissance |
+| Impacket (GetUserSPNs) | Kerberoasting / TGS ticket capture |
+| Hashcat | Offline password hash cracking |
+| Rockyou.txt | Password wordlist for hash cracking |
